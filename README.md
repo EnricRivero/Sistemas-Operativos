@@ -1,1 +1,1 @@
-# Sistemes-Operatius
+# Sistemas-Operativos
