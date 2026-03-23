@@ -1,2 +1,9 @@
-*.sh linguist-detectable
+# Ignorar HTML de las estadísticas
 *.html linguist-vendored
+
+# Bash explícito (opcional, por si acaso)
+*.sh linguist-language=Bash
+
+# C se detecta solo, pero puedes forzarlo si quieres
+*.c linguist-detectable
+*.h linguist-detectable
