@@ -50,33 +50,65 @@ int main (int argc, char * argv[]){
     }
 
     int lim_b, lim_a, anys, lim_m;
-    lim_a = atoi(argv[1]);
-    lim_m = atoi(argv[2]);
-    lim_b = atoi(argv[3]);
+    lim_a = atof(argv[1]);
+    lim_m = atof(argv[2]);
+    lim_b = atof(argv[3]);
     anys = atoi(argv[4]);
 
     //Aquest printf és únicament per a comprovar que funciona correctament l'entrada de paràmetres.
     printf(" Limite Alto: %d\n Limite Medio: %d\n Limite Bajo: %d\n Años: %d\n", lim_a, lim_m, lim_b, anys);
 
     int parent_id, north_id, south_id;
-    int p1[2], p2[2];
+    int p_south[2], p_north[2], p_southBack[2], p_northBack[2];
 
-    pipe(p1);
-    pipe(p2);
+    pipe(p_south);
+    pipe(p_north);
+
+    pipe(p_southBack);
+    pipe(p_northBack);
 
     parent_id = getpid();
     north_id = fork();
 
     if (north_id == 0) { // Fill Nord
 
+        // Tanquem els pipes que no fem servir
+        close(p_north[1]);
+        close(p_south[0]); close(p_south[1]);
+        close(p_northBack[0]);
+        close(p_southBack[0]); close(p_southBack[1]);
+
         signal(SIGUSR1, senyalnord);
-    }
 
-    south_id = fork();
-    if (south_id == 0) { // Fill Sud
+        // TO DO
 
-    } else { // Pare
+    } else {
+        south_id = fork();
+        if (south_id == 0) { // Fill Sud
 
+            // Tanquem els pipes que no fem servir
+            close(p_south[1]);
+            close(p_north[0]); close(p_north[1]);
+            close(p_sudBack[0]);
+            close(p_northBack[0]); close(p_northBack[1]);
+
+            signal(SIGUSR1, senyalsud);
+
+            // TO DO
+
+        } else { // Pare
+
+            // Tanquem els pipes que no fem servir
+            close(p_north[0]);
+            close(p_south[0]);
+            close(p_northBack[1]);
+            close(p_southBack[1]);
+
+            // TO DO
+
+            waitpid(north_id, NULL, 0);
+            waitpid(south_id, NULL, 0);
+        }
     }
 
     return 0;
