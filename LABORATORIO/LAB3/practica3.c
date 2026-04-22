@@ -75,12 +75,6 @@ double retorna_limit(double deposit, double lim_a, double lim_b, double lim_m){
   
 }
 
-// Calcula la demanda en funció del límit.
-double proceso_hijo(double limit){
-    // Falta implementar!
-    return 0.0;
-}
-
 int main (int argc, char * argv[]){
 
     if ( argc != 5){
@@ -142,8 +136,19 @@ int main (int argc, char * argv[]){
             close(p_northBack[0]);
 
             signal(SIGUSR1, senyalnord);
+            while(!rebut_nord){
+                sigsuspend(&oldmask);
+            }
+            rebut_nord = 0;
 
-            pause();
+            read(p_north[0], &limit, sizeof(double));
+            printf("[Regantes Norte - PID ", getpid(), " ] He recibido limite de:  %lf m3 \n",limit);
+            extraccio = ((double)rand() / RAND_MAX) * limit;
+
+            printf("[Regantes Norte - PID ", getpid(), " ] Solicito:  %lf m3 \n",extraccio);
+            write(p_northBack[1], &extraccio, sizeof(double));
+            kill(parent_id, SIGUSR1);
+
 
         } else if(south_id == 0){
                 pause();
@@ -174,7 +179,6 @@ int main (int argc, char * argv[]){
                 limit = retorna_limit(diposit, lim_a, lim_b, lim_m);
                 printf("[Coordinador] Límit aplicat aquest any: %lf \n",diposit);
                 write(p_north[1], &limit, sizeof(double));
-
 
                 //S'envia senyal a fill
                 kill(north_id,SIGUSR1);
