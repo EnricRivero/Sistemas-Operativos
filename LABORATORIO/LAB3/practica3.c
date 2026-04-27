@@ -176,7 +176,7 @@ int main (int argc, char * argv[]){
                 printf("[Coordinador] Aigüa disponible a inici d'any:  %lf m3 \n",diposit);
 
                 limit = retorna_limit(diposit, lim_a, lim_b, lim_m);
-                printf("[Coordinador] Límit aplicat aquest any: %lf \n",diposit);
+                printf("[Coordinador] Límit aplicat aquest any: %lf \n",limit);
                 write(p_north[1], &limit, sizeof(double));
 
                 //S'envia senyal a fill
@@ -215,7 +215,7 @@ int main (int argc, char * argv[]){
                 read(p_southBack[0], &extraccio, sizeof(double));
                 printf("[Coordinador] Regants sud sol·liciten %lf m3.\n",extraccio);
 
-                if(extraccio >= diposit){
+                if(extraccio <= diposit){
                     printf("[Coordinador] Sol·licitut aprovada per a Regants sud. \n");
                     diposit = diposit - extraccio;
                     total_sud += extraccio;
@@ -230,7 +230,7 @@ int main (int argc, char * argv[]){
                 if (diposit < 0) diposit = 0.0;
                 if (diposit > 1000) diposit = 1000.0;
                 printf("[Coordinador] Aigüa Disponible a final d'any: %lf \n", diposit);
-                if( i == 5){
+                if( i == anys){
                     printf("La simulació ha finalitzat.\nAigüa otorgada a Regants nord: %lf m3\nAigüa otorgada a Regants sud: %lf m3\nTotal aigüa otorgada: %lf m3\nAigüa final al dipòsit: %lf m3\n ", total_nord, total_sud, total_nord + total_sud, diposit);
                 } 
 
