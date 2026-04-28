@@ -160,8 +160,18 @@ int main (int argc, char * argv[]){
                 close(p_northBack[1]);
 
                 signal(SIGUSR1, senyalsud);
-                
-                pause();
+                while(!rebut_south){
+                sigsuspend(&oldmask);
+            }
+            rebut_south = 0;
+
+            read(p_south[0], &limit, sizeof(double));
+            printf("[Regantes Sur - PID ", getpid(), " ] He recibido limite de:  %lf m3 \n",limit);
+            extraccio = ((double)rand() / RAND_MAX) * limit;
+
+            printf("[Regantes Sur - PID ", getpid(), " ] Solicito:  %lf m3 \n",extraccio);
+            write(p_southBack[1], &extraccio, sizeof(double));
+            kill(parent_id, SIGUSR1);
 
         } else { // Pare
                 
