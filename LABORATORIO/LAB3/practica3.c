@@ -90,11 +90,11 @@ int main (int argc, char * argv[]){
     //Configuració de Màscares:
     sigset_t mask, oldmask;
     sigemptyset(&mask);
-    sigaddset(&mask, SIG_USR1); // El sistema usa SIGUSR1 según enunciado [cite: 33]
+    sigaddset(&mask, SIGUSR1); // El sistema usa SIGUSR1 según enunciado [cite: 33]
     sigaddset(&mask, SIGUSR2);
     sigprocmask(SIG_BLOCK, &mask, &oldmask);
 
-    diposit = 1000.0; [cite: 22]
+    diposit = 1000.0; 
     total_nord = 0.0;
     total_sud = 0.0;
 
@@ -102,10 +102,10 @@ int main (int argc, char * argv[]){
     pipe(p_southBack); pipe(p_northBack);
 
     parent_id = getpid();
-    north_id = fork(); [cite: 30]
+    north_id = fork();
 
     if (north_id != 0) {
-        south_id = fork(); [cite: 30]
+        south_id = fork(); 
     }
 
     if (north_id == 0) { // --- FILL NORD ---
@@ -119,13 +119,13 @@ int main (int argc, char * argv[]){
 
         for (int i = 1; i <= anys; i++) {
             while(!rebut_nord){
-                sigsuspend(&oldmask); [cite: 35, 96]
+                sigsuspend(&oldmask);
             }
             rebut_nord = 0;
 
             read(p_north[0], &limit, sizeof(double));
             printf("[Regantes Norte PID %d] He recibido limite de: %.2f m3\n", getpid(), limit);
-            extraccio = ((double)rand() / RAND_MAX) * limit; [cite: 81, 97]
+            extraccio = ((double)rand() / RAND_MAX) * limit;
 
             printf("[Regantes Norte PID %d] Solicito: %.2f m3\n", getpid(), extraccio);
             write(p_northBack[1], &extraccio, sizeof(double));
@@ -167,11 +167,11 @@ int main (int argc, char * argv[]){
         signal(SIGUSR2, senyalparesud);
 
         for (int i = 1; i <= anys; i++) {
-            printf("\n* AÑO %d\n", i); [cite: 103]
-            printf("[Coordinador] Agua disponible al inicio: %.2f m3\n", diposit); [cite: 104]
+            printf("\n* AÑO %d\n", i); 
+            printf("[Coordinador] Agua disponible al inicio: %.2f m3\n", diposit);
 
             limit = retorna_limit(diposit, lim_a, lim_m, lim_b);
-            printf("[Coordinador] Limite aplicado este año: %.2f m3\n", limit); [cite: 105]
+            printf("[Coordinador] Limite aplicado este año: %.2f m3\n", limit); 
 
             // --- GESTIÓN NORTE ---
             write(p_north[1], &limit, sizeof(double));
@@ -181,11 +181,11 @@ int main (int argc, char * argv[]){
             
             read(p_northBack[0], &extraccio, sizeof(double));
             printf("[Coordinador] Regantes Norte solicitan: %.2f m3\n", extraccio);
-            if(extraccio <= diposit){ [cite: 84]
+            if(extraccio <= diposit){
                 printf("[Coordinador] Solicitud aprobada para Regantes Norte\n");
                 diposit -= extraccio;
                 total_nord += extraccio;
-            } else { [cite: 85]
+            } else {
                 printf("[Coordinador] Solicitud ajustada (deposito insuficiente) para Regantes Norte\n");
                 total_nord += diposit;
                 diposit = 0;
@@ -210,28 +210,29 @@ int main (int argc, char * argv[]){
             }
 
             // --- RECUPERACIÓN ---
-            double pct_base = base_recuperacion(diposit); [cite: 57, 88]
-            double pct_var = evento_meteorologico(); [cite: 63, 89]
+            double pct_base = base_recuperacion(diposit);
+            double pct_var = evento_meteorologico(); 
             double pct_final = pct_base + pct_var;
-            if (pct_final < 0) pct_final = 0; [cite: 69]
 
             double agua_recup = diposit * pct_final;
-            diposit += agua_recup; [cite: 90]
-            if (diposit > 1000) diposit = 1000.0; [cite: 22, 90]
+            diposit += agua_recup;
+
+            if (diposit > 1000) diposit = 1000.0; 
+            if (diposit < 0) diposit = 0.0;
 
             printf("[Coordinador] Agua recuperada: %.2f m3\n", agua_recup);
-            printf("[Coordinador] Agua disponible al final del año: %.2f m3\n", diposit); [cite: 122]
+            printf("[Coordinador] Agua disponible al final del año: %.2f m3\n", diposit);
         }
 
         // Finalización: el padre espera a los hijos fuera del bucle
-        waitpid(north_id, NULL, 0); [cite: 99]
-        waitpid(south_id, NULL, 0); [cite: 99]
+        waitpid(north_id, NULL, 0); 
+        waitpid(south_id, NULL, 0);
 
-        printf("\nLa simulacion ha finalizado.\n"); [cite: 206]
-        printf("Agua concedida a Regantes Norte: %.2f m3\n", total_nord); [cite: 207]
-        printf("Agua concedida a Regantes Sur: %.2f m3\n", total_sud); [cite: 208]
-        printf("Total agua concedida: %.2f m3\n", total_nord + total_sud); [cite: 209]
-        printf("Agua final en el deposito: %.2f m3\n", diposit); [cite: 210]
+        printf("\nLa simulacion ha finalizado.\n"); 
+        printf("Agua concedida a Regantes Norte: %.2f m3\n", total_nord); 
+        printf("Agua concedida a Regantes Sur: %.2f m3\n", total_sud);
+        printf("Total agua concedida: %.2f m3\n", total_nord + total_sud); 
+        printf("Agua final en el deposito: %.2f m3\n", diposit);
     }
 
     return 0;
