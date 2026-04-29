@@ -142,10 +142,10 @@ int main (int argc, char * argv[]){
             rebut_nord = 0;
 
             read(p_north[0], &limit, sizeof(double));
-            printf("[Regantes Norte - PID ", getpid(), " ] He recibido limite de:  %lf m3 \n",limit);
+            printf("[Regantes Norte - PID %d  ] He recibido limite de:  %lf m3 \n",getpid(),limit);
             extraccio = ((double)rand() / RAND_MAX) * limit;
 
-            printf("[Regantes Norte - PID ", getpid(), " ] Solicito:  %lf m3 \n",extraccio);
+            printf("[Regantes Norte - PID  %d ] Solicito:  %lf m3 \n",getpid(),extraccio);
             write(p_northBack[1], &extraccio, sizeof(double));
             kill(parent_id, SIGUSR1);
 
@@ -160,16 +160,16 @@ int main (int argc, char * argv[]){
                 close(p_northBack[1]);
 
                 signal(SIGUSR1, senyalsud);
-                while(!rebut_south){
+                while(!rebut_sud){
                 sigsuspend(&oldmask);
             }
-            rebut_south = 0;
+            rebut_sud = 0;
 
             read(p_south[0], &limit, sizeof(double));
-            printf("[Regantes Sur - PID ", getpid(), " ] He recibido limite de:  %lf m3 \n",limit);
+            printf("[Regantes Sur - PID %d ] He recibido limite de:  %lf m3 \n",getpid(),limit);
             extraccio = ((double)rand() / RAND_MAX) * limit;
 
-            printf("[Regantes Sur - PID ", getpid(), " ] Solicito:  %lf m3 \n",extraccio);
+            printf("[Regantes Sur - PID %d ] Solicito:  %lf m3 \n",getpid(),extraccio);
             write(p_southBack[1], &extraccio, sizeof(double));
             kill(parent_id, SIGUSR1);
 
