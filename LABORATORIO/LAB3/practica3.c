@@ -149,7 +149,6 @@ int main (int argc, char * argv[]){
             write(p_northBack[1], &extraccio, sizeof(double));
             kill(parent_id, SIGUSR1);
 
-
         } else if(south_id == 0){
                 pause();
                 // Tanquem els pipes que no fem servir
@@ -228,11 +227,11 @@ int main (int argc, char * argv[]){
                 recuperacio =  evento_meteorologico() + base_recuperacion(diposit);
                 printf("[Coordinador] Aigüa recuperada: %lf \n",recuperacio); 
                 diposit = diposit + diposit*recuperacio;
-                if (diposit < 0) diposit = 0.0; 
+                if (diposit < 0) diposit = 0.0;
+                if (diposit > 1000) diposit = 1000.0;
                 printf("[Coordinador] Aigüa Disponible a final d'any: %lf \n", diposit);
                 if( i == 5){
                     printf("La simulació ha finalitzat.\nAigüa otorgada a Regants nord: %lf m3\nAigüa otorgada a Regants sud: %lf m3\nTotal aigüa otorgada: %lf m3\nAigüa final al dipòsit: %lf m3\n ", total_nord, total_sud, total_nord + total_sud, diposit);
-                   
                 } 
 
                 waitpid(north_id, NULL, 0);
