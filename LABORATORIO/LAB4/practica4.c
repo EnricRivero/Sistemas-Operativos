@@ -14,6 +14,7 @@ typedef struct {
 void ordenar(){
     // Ordena por año e imprime los 10 primeros
 }
+
 int main (int argc, char * argv[]){
 
     if ( argc != 2 || argc != 3 ){
