@@ -14,48 +14,48 @@ typedef struct {
 LifeRecord *records = NULL;
 int total_records = 0;
 
-int comparar_por_anyo(const void *a, const void *b) {
+int comparar_per_any(const void *a, const void *b) {
     const LifeRecord *ra = (const LifeRecord *)a;
     const LifeRecord *rb = (const LifeRecord *)b;
     return ra->year - rb->year;
 }
 
 void ordenar() {
-    qsort(records, total_records, sizeof(LifeRecord), comparar_por_anyo);
+    qsort(records, total_records, sizeof(LifeRecord), comparar_per_any);
 
-    int limite = total_records < 10 ? total_records : 10;
+    int limit = total_records < 10 ? total_records : 10;
     printf("%-40s %-8s %-6s %s\n", "País", "Código", "Año", "Esperanza de vida");
     printf("--------------------------------------------------------------------\n");
-    for (int i = 0; i < limite; i++) {
-        printf("%-40s %-8s %-6d %.2f\n",
-               records[i].country,
-               records[i].code,
-               records[i].year,
-               records[i].life_expectancy);
+    for (int i = 0; i < limit; i++) {
+        printf("%-40s %-8s %-6d %.2f\n", records[i].country, records[i].code, records[i].year, records[i].life_expectancy);
     }
 }
 
 int main (int argc, char * argv[]){
 
+    // 2 o 3 arguments
     if (argc < 3 || argc > 4) {
         printf("Uso: %s <malloc|mmap> <archivo.csv> [sort]\n", argv[0]);
         return 1;
     }
 
-    char *modo    = argv[1];
-    char *archivo = argv[2];
-    int sort      = (argc == 4 && strcmp(argv[3], "sort") == 0);
+    char *modo = argv[1]; // Mode malloc o mmap
+    char *archivo = argv[2]; // Archiu .csv amb les dades
+    int sort = (argc == 4 && strcmp(argv[3], "sort") == 0); // S'ordena per any i s'agafen els 10 primers
 
     if (strcmp(modo, "malloc") == 0) {
         modo_malloc(archivo);
+
     } else if (strcmp(modo, "mmap") == 0) {
         modo_mmap(archivo);
+        
     } else {
         printf("Modo '%s' no existe. Usa 'malloc' o 'mmap'.\n", modo);
         return 1;
     }
 
     if (sort) {
+        printf("Primeros 10 registros:");
         ordenar();
     }
 
