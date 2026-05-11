@@ -11,22 +11,58 @@ typedef struct {
  float life_expectancy;
 } LifeRecord;
 
-void ordenar(){
-    // Ordena por año e imprime los 10 primeros
+LifeRecord *records = NULL;
+int total_records = 0;
+
+int comparar_por_anyo(const void *a, const void *b) {
+    const LifeRecord *ra = (const LifeRecord *)a;
+    const LifeRecord *rb = (const LifeRecord *)b;
+    return ra->year - rb->year;
+}
+
+void ordenar() {
+    qsort(records, total_records, sizeof(LifeRecord), comparar_por_anyo);
+
+    int limite = total_records < 10 ? total_records : 10;
+    printf("%-40s %-8s %-6s %s\n", "País", "Código", "Año", "Esperanza de vida");
+    printf("--------------------------------------------------------------------\n");
+    for (int i = 0; i < limite; i++) {
+        printf("%-40s %-8s %-6d %.2f\n",
+               records[i].country,
+               records[i].code,
+               records[i].year,
+               records[i].life_expectancy);
+    }
 }
 
 int main (int argc, char * argv[]){
 
-    if ( argc != 2 || argc != 3 ){
-        printf("El nombre de paràmetres no és correcte.\n");
+    if (argc < 3 || argc > 4) {
+        printf("Uso: %s <malloc|mmap> <archivo.csv> [sort]\n", argv[0]);
         return 1;
     }
 
-    modo = atof(argv[1]); // Elige entre modo malloc y modo mmap
-    archivo = atof(argv[2]); // Archivo .csv con los datos a almacenar
-    sort = atof(argv[3]); // Permite la ordenación de los resultados por año
+    char *modo    = argv[1];
+    char *archivo = argv[2];
+    int sort      = (argc == 4 && strcmp(argv[3], "sort") == 0);
 
-    if (modo == "malloc"){
+    if (strcmp(modo, "malloc") == 0) {
+        modo_malloc(archivo);
+    } else if (strcmp(modo, "mmap") == 0) {
+        modo_mmap(archivo);
+    } else {
+        printf("Modo '%s' no existe. Usa 'malloc' o 'mmap'.\n", modo);
+        return 1;
+    }
+
+    if (sort) {
+        ordenar();
+    }
+
+    return 0;
+}
+
+void modo_malloc(archivo){
         /*
         1. Reservar memoria inicial para 100 registros.
         2. Leer cada línea mediante fgets.
@@ -35,8 +71,9 @@ int main (int argc, char * argv[]){
         5. Guardar los registros en memoria.
         6. Continuar hasta finalizar el fichero.
         */
+}
 
-    } else if (modo == "mmap"){
+void modo_mmap(archivo){
         /*
         1. Abrir fichero con open().
         2. Obtener tamaño con fstat().
@@ -45,12 +82,4 @@ int main (int argc, char * argv[]){
         5. Parsear cada línea.
         6. Liberar memoria con munmap(). 
         */
-
-    } else {
-        printf("Este modo no existe");
-    }
-    ordenar();
-
-
-    return 0;
 }
