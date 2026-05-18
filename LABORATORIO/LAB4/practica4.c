@@ -31,6 +31,30 @@ void ordenar() {
     }
 }
 
+void modo_malloc(char *archivo,int sortTrue){
+        
+        //1. Reservar memoria inicial para 100 registros.
+        LifeRecord * array = (LifeRecord *) malloc(100*sizeof(LifeRecord));
+        //2. Leer cada línea mediante fgets.
+        //
+        //3. Parsear datos usando strtok.
+        //4. Si la memoria se llena, duplicar la capacidad mediante realloc.
+        //5. Guardar los registros en memoria.
+        //6. Continuar hasta finalizar el fichero.
+        
+}
+
+void modo_mmap(char *archivo, int sortTrue){
+        /*
+        1. Abrir fichero con open().
+        2. Obtener tamaño con fstat().
+        3. Mapear fichero con mmap().
+        4. Recorrer memoria detectando saltos de línea.
+        5. Parsear cada línea.
+        6. Liberar memoria con munmap(). 
+        */
+}
+
 int main (int argc, char * argv[]){
 
     // 2 o 3 arguments
@@ -41,45 +65,23 @@ int main (int argc, char * argv[]){
 
     char *modo = argv[1]; // Mode malloc o mmap
     char *archivo = argv[2]; // Archiu .csv amb les dades
-    int sort = (argc == 4 && strcmp(argv[3], "sort") == 0); // S'ordena per any i s'agafen els 10 primers
+    int sortTrue = 0;
+
+    if(argc == 4) sortTrue = 1;
 
     if (strcmp(modo, "malloc") == 0) {
-        modo_malloc(archivo);
+        modo_malloc(archivo,sortTrue);
 
     } else if (strcmp(modo, "mmap") == 0) {
-        modo_mmap(archivo);
+        modo_mmap(archivo,sortTrue);
         
     } else {
         printf("Modo '%s' no existe. Usa 'malloc' o 'mmap'.\n", modo);
         return 1;
     }
 
-    if (sort) {
-        printf("Primeros 10 registros:");
-        ordenar();
-    }
 
     return 0;
 }
 
-void modo_malloc(archivo){
-        /*
-        1. Reservar memoria inicial para 100 registros.
-        2. Leer cada línea mediante fgets.
-        3. Parsear datos usando strtok.
-        4. Si la memoria se llena, duplicar la capacidad mediante realloc.
-        5. Guardar los registros en memoria.
-        6. Continuar hasta finalizar el fichero.
-        */
-}
 
-void modo_mmap(archivo){
-        /*
-        1. Abrir fichero con open().
-        2. Obtener tamaño con fstat().
-        3. Mapear fichero con mmap().
-        4. Recorrer memoria detectando saltos de línea.
-        5. Parsear cada línea.
-        6. Liberar memoria con munmap(). 
-        */
-}
